@@ -1,0 +1,66 @@
+<?php
+// PsychStudioXpress provides tools to behavioral and social science researchers.
+// Copyright (C) 2013 William Kelly Hudgins
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3.
+//
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// this program. If not, see <http://www.gnu.org/licenses>.
+//
+// If you have questions, please email wkhudgins@psychstudioxpress.net
+
+// vPOS
+// Version 1.0
+// conf.php
+// The following are the only php variables that must be edited to configure vPOS.
+// This file is loaded into each vPOS file.
+
+$PROJECT_TITLE = "Psych"; // The title of the project using vPOS
+$USAGE = "vPOS"; // What the application is doing, leave default if unsure
+$BUILD_NO = "Version 1.0"; // Version number of vPOS, leave default if unsure
+$SERVER = "localhost"; // Location of the MySQL database, leave default if unsure
+$MYSQL_USER = ""; // MySQL username
+$MYSQL_PASSWORD = ""; // MySQL password
+$MYSQL_DB = "vpos"; // The name of the database storing the vPOS data
+$DEFAULT_MENU = "lunch"; // The name of the default "menu"
+$SALES_TAX = "0.0825"; // Sales tax in Decimal format, leave default if unsure
+$SYSTEM_PASSWORD = "admin"; // The password for the manager menu
+$AUTOMATE = 'no'; // Determines if the vPOS will automatically play orders, to disable, change to no
+$SOUND_PATH = "order_clips"; // Path to sound files for automatic mode, leave blank if unsure
+
+session_start();
+
+// Make a MySQL Connection
+mysql_connect("$SERVER", "$MYSQL_USER", "$MYSQL_PASSWORD") or die(mysql_error());
+$database = mysql_select_db("$MYSQL_DB");
+
+// Global Functions
+
+// Clean Input Function
+function clean($input)
+{
+	$whattostrp = array("'", ")", "(", "*",">","<");
+	$input = str_replace($whattostrp, "", "$input");
+	$input=stripslashes($input);
+	$input=strip_tags($input);
+	$input=mysql_real_escape_string($input);
+	return $input;
+}
+
+// Encryption Function
+function crypto($input)
+{
+	$salt[0] =  "aBdsajASD243Hasd";
+	$salt[1] = "aazcdkfs";
+	$crypt[0] = crc32($input);
+	$crypt[1] = crypt($input, $salt[0]);
+	$crypt[2] = md5($input);
+	$crypt = implode($salt[1], $crypt);
+	return sha1($input.$crypt);
+}
